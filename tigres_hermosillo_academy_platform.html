@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#FFB100;
+  --gold-dark:#CC8E00;
+  --gold-light:#FFD166;
+  --navy:#003366;
+  --navy-mid:#004080;
+  --navy-light:#0055AA;
+  --white:#ffffff;
+  --gray-50:#f8f9fa;
+  --gray-100:#f0f2f5;
+  --gray-200:#e2e8f0;
+  --gray-400:#94a3b8;
+  --gray-600:#475569;
+  --gray-800:#1e293b;
+  --danger:#dc2626;
+  --success:#16a34a;
+  --warning:#d97706;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gray-100);color:var(--gray-800);min-height:100vh}
+
+/* NAV */
+.nav{background:var(--navy);color:var(--white);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+.nav-brand{display:flex;align-items:center;gap:12px}
+.nav-logo{width:38px;height:38px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--navy);font-size:15px}
+.nav-title{font-size:16px;font-weight:700;letter-spacing:0.3px}
+.nav-sub{font-size:11px;color:var(--gold);letter-spacing:1px;text-transform:uppercase}
+.nav-tabs{display:flex;gap:4px}
+.nav-tab{padding:8px 16px;border:none;background:transparent;color:rgba(255,255,255,0.65);font-size:13px;cursor:pointer;border-radius:6px;transition:all 0.2s;font-family:inherit}
+.nav-tab:hover{background:rgba(255,255,255,0.1);color:var(--white)}
+.nav-tab.active{background:var(--gold);color:var(--navy);font-weight:600}
+.nav-user{display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.8)}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;color:var(--navy);font-weight:700;font-size:12px}
+.btn-logout{background:none;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit}
+.btn-logout:hover{background:rgba(255,255,255,0.1);color:var(--white)}
+
+/* MAIN */
+.main{max-width:1100px;margin:0 auto;padding:2rem}
+.page{display:none}
+.page.active{display:block}
+
+/* CARDS */
+.card{background:var(--white);border-radius:12px;border:1px solid var(--gray-200);padding:1.5rem}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.card-title{font-size:16px;font-weight:600;color:var(--navy)}
+
+/* HERO / LOGIN */
+.login-wrap{min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 60%,var(--navy-light) 100%);position:relative;overflow:hidden}
+.login-wrap::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FFB100' fill-opacity='0.06'%3E%3Ccircle cx='30' cy='30' r='28' stroke='%23FFB100' stroke-width='2'/%3E%3Ccircle cx='30' cy='30' r='5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.login-box{background:var(--white);border-radius:16px;padding:2.5rem 2rem;width:100%;max-width:400px;box-shadow:0 25px 50px rgba(0,0,0,0.3);position:relative;z-index:1}
+.login-logo{width:64px;height:64px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;border:4px solid var(--gold)}
+.login-logo span{font-weight:900;color:var(--gold);font-size:20px}
+.login-h{text-align:center;font-size:22px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.login-sub{text-align:center;font-size:13px;color:var(--gray-600);margin-bottom:1.5rem}
+.form-group{margin-bottom:1rem}
+.form-label{display:block;font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.form-input{width:100%;padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:14px;font-family:inherit;color:var(--gray-800);transition:border-color 0.2s;outline:none}
+.form-input:focus{border-color:var(--navy)}
+.form-select{width:100%;padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:14px;font-family:inherit;color:var(--gray-800);background:var(--white);outline:none}
+.form-select:focus{border-color:var(--navy)}
+.btn-primary{width:100%;padding:12px;background:var(--navy);color:var(--white);border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:background 0.2s}
+.btn-primary:hover{background:var(--navy-mid)}
+.btn-gold{background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s}
+.btn-gold:hover{background:var(--gold-dark)}
+.btn-outline{background:transparent;color:var(--navy);border:1.5px solid var(--navy);border-radius:8px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s}
+.btn-outline:hover{background:var(--navy);color:var(--white)}
+.btn-sm{padding:6px 14px;font-size:12px;border-radius:6px}
+.btn-danger{background:var(--danger);color:var(--white);border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-success{background:var(--success);color:var(--white);border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.login-switch{text-align:center;margin-top:1rem;font-size:13px;color:var(--gray-600)}
+.login-switch a{color:var(--navy);font-weight:600;cursor:pointer;text-decoration:underline}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:var(--white);border-radius:12px;border:1px solid var(--gray-200);padding:1.25rem;text-align:center}
+.stat-num{font-size:28px;font-weight:700;color:var(--navy)}
+.stat-num.gold{color:var(--gold-dark)}
+.stat-num.green{color:var(--success)}
+.stat-num.red{color:var(--danger)}
+.stat-label{font-size:12px;color:var(--gray-600);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* BADGE */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-paid{background:#dcfce7;color:#166534}
+.badge-partial{background:#fef9c3;color:#854d0e}
+.badge-pending{background:#fee2e2;color:#991b1b}
+.badge-gold{background:#fff7e6;color:#7c4d00}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--gray-50);padding:10px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--gray-200)}
+td{padding:10px 12px;border-bottom:1px solid var(--gray-200);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--gray-50)}
+
+/* PLAYER CARD */
+.player-card{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:10px;padding:1rem;margin-bottom:1rem}
+.player-header{display:flex;align-items:center;gap:10px;margin-bottom:0.75rem}
+.player-avatar{width:40px;height:40px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;font-size:14px;flex-shrink:0}
+.player-name{font-weight:600;font-size:15px;color:var(--navy)}
+.player-info{font-size:12px;color:var(--gray-600)}
+
+/* PAYMENT ROWS */
+.payment-month{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray-200)}
+.payment-month:last-child{border-bottom:none}
+.pm-label{font-size:13px;font-weight:500;color:var(--gray-800)}
+.pm-amount{font-size:13px;font-weight:600;color:var(--navy)}
+.pm-status{display:flex;align-items:center;gap:8px}
+
+/* MODAL */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,20,50,0.6);display:flex;align-items:center;justify-content:center;z-index:200;padding:1rem}
+.modal{background:var(--white);border-radius:16px;padding:2rem;width:100%;max-width:620px;max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.modal-title{font-size:18px;font-weight:700;color:var(--navy)}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--gray-400);line-height:1}
+.modal-close:hover{color:var(--gray-800)}
+
+/* FORM GRID */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+.col-span-2{grid-column:span 2}
+
+/* SECTION DIVIDER */
+.section-title{font-size:13px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:0.5px;margin:1.5rem 0 0.75rem;padding-bottom:6px;border-bottom:2px solid var(--gold)}
+
+/* PROGRESS BAR */
+.progress-bar{background:var(--gray-200);border-radius:99px;height:6px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gold);border-radius:99px;transition:width 0.3s}
+.progress-fill.green{background:var(--success)}
+.progress-fill.red{background:var(--danger)}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--navy);color:var(--white);padding:12px 20px;border-radius:10px;font-size:14px;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,0.3);transform:translateY(100px);opacity:0;transition:all 0.3s}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:var(--success)}
+.toast.error{background:var(--danger)}
+
+/* WELCOME BANNER */
+.welcome-banner{background:linear-gradient(135deg,var(--navy),var(--navy-mid));color:var(--white);border-radius:12px;padding:1.5rem 2rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between}
+.wb-title{font-size:20px;font-weight:700;margin-bottom:4px}
+.wb-sub{font-size:13px;color:var(--gold-light);opacity:0.9}
+.wb-icon{font-size:48px}
+
+/* TABS */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--gray-200);margin-bottom:1.5rem}
+.tab{padding:8px 18px;background:none;border:none;font-size:13px;font-weight:500;color:var(--gray-600);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;font-family:inherit;border-radius:0}
+.tab.active{color:var(--navy);border-bottom-color:var(--gold);font-weight:600}
+.tab:hover{color:var(--navy)}
+
+/* ADMIN SEARCH */
+.search-bar{width:100%;padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:14px;font-family:inherit;outline:none;margin-bottom:1rem}
+.search-bar:focus{border-color:var(--navy)}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:3rem;color:var(--gray-400)}
+.empty-icon{font-size:40px;margin-bottom:1rem}
+
+/* SUMMARY PILL */
+.summary-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
+.pill{background:var(--gray-100);border:1px solid var(--gray-200);border-radius:99px;padding:4px 12px;font-size:12px;color:var(--gray-600)}
+.pill strong{color:var(--navy)}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .form-grid,.form-grid-3{grid-template-columns:1fr}
+  .col-span-2{grid-column:span 1}
+  .nav-tabs{display:none}
+  .main{padding:1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" style="min-height:100vh">
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="nav-logo">TH</div>
+      <div>
+        <div class="nav-title">Tigres Hermosillo</div>
+        <div class="nav-sub">Academia de Futbol</div>
+      </div>
+    </div>
+  </nav>
+  <div class="login-wrap">
+    <div class="login-box">
+      <div class="login-logo"><span>🐯</span></div>
+      <div class="login-h">Bienvenido</div>
+      <div class="login-sub">tigreshermosillo.com · Portal Familiar</div>
+      <div id="loginMode">
+        <div class="form-group">
+          <label class="form-label">Correo Electrónico</label>
+          <input class="form-input" type="email" id="loginEmail" placeholder="correo@ejemplo.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input class="form-input" type="password" id="loginPass" placeholder="••••••••"/>
+        </div>
+        <button class="btn-primary" onclick="doLogin()">Iniciar Sesión</button>
+        <div class="login-switch" style="margin-top:0.75rem">¿Primera vez? <a onclick="toggleForm('register')">Registrarse aquí</a></div>
+        <div class="login-switch"><a onclick="doLogin('admin')" style="color:var(--gray-400);font-size:11px;font-weight:400">Acceso Administrador</a></div>
+      </div>
+      <div id="registerMode" style="display:none">
+        <p style="font-size:13px;color:var(--gray-600);margin-bottom:1rem;text-align:center">Registro de nueva familia</p>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Nombre del Papá</label>
+            <input class="form-input" type="text" id="regDad" placeholder="Nombre completo"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nombre de la Mamá</label>
+            <input class="form-input" type="text" id="regMom" placeholder="Nombre completo"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Correo Electrónico</label>
+            <input class="form-input" type="email" id="regEmail" placeholder="correo@ejemplo.com"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Teléfono</label>
+            <input class="form-input" type="tel" id="regPhone" placeholder="662-000-0000"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input class="form-input" type="password" id="regPass" placeholder="Mínimo 6 caracteres"/>
+        </div>
+        <div class="section-title" style="margin-top:0.5rem">Jugador 1</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Nombre del Jugador</label>
+            <input class="form-input" type="text" id="p1name" placeholder="Nombre completo"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fecha de Nacimiento</label>
+            <input class="form-input" type="date" id="p1bday"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Talla de Ropa</label>
+            <select class="form-select" id="p1size">
+              <option value="">Seleccionar...</option>
+              <option>4</option><option>6</option><option>8</option><option>10</option>
+              <option>12</option><option>14</option><option>16</option>
+              <option>S</option><option>M</option><option>L</option><option>XL</option>
+            </select>
+          </div>
+        </div>
+        <div id="extraPlayersReg"></div>
+        <button class="btn-outline" style="margin-bottom:1rem;width:100%" onclick="addPlayerField()">+ Agregar otro jugador</button>
+        <button class="btn-primary" onclick="doRegister()">Crear Cuenta</button>
+        <div class="login-switch"><a onclick="toggleForm('login')">Ya tengo cuenta</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PARENT PORTAL -->
+<div id="parentPortal" style="display:none">
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="nav-logo">TH</div>
+      <div>
+        <div class="nav-title">Tigres Hermosillo</div>
+        <div class="nav-sub">Portal Familiar</div>
+      </div>
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showParentTab('dashboard')">Inicio</button>
+      <button class="nav-tab" onclick="showParentTab('payments')">Mis Pagos</button>
+      <button class="nav-tab" onclick="showParentTab('profile')">Mi Perfil</button>
+    </div>
+    <div class="nav-user">
+      <div class="nav-avatar" id="parentInitials">FA</div>
+      <span id="parentNameNav">Familia</span>
+      <button class="btn-logout" onclick="doLogout()">Salir</button>
+    </div>
+  </nav>
+  <div class="main">
+    <!-- DASHBOARD TAB -->
+    <div id="pDashboard" class="page active">
+      <div class="welcome-banner">
+        <div>
+          <div class="wb-title" id="wbTitle">Bienvenida, Familia García</div>
+          <div class="wb-sub">Temporada 2024–2025 · Agosto – Junio</div>
+        </div>
+        <div class="wb-icon">⚽</div>
+      </div>
+      <div class="stats-grid" id="parentStats"></div>
+      <div id="playerCards"></div>
+    </div>
+    <!-- PAYMENTS TAB -->
+    <div id="pPayments" class="page">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Estado de Cuenta</div>
+        </div>
+        <div id="paymentDetails"></div>
+      </div>
+    </div>
+    <!-- PROFILE TAB -->
+    <div id="pProfile" class="page">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Información de la Familia</div></div>
+        <div id="profileInfo"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PORTAL -->
+<div id="adminPortal" style="display:none">
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="nav-logo">AD</div>
+      <div>
+        <div class="nav-title">Tigres Hermosillo</div>
+        <div class="nav-sub">Panel Administrativo</div>
+      </div>
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showAdminTab('overview')">Resumen</button>
+      <button class="nav-tab" onclick="showAdminTab('families')">Familias</button>
+      <button class="nav-tab" onclick="showAdminTab('payments')">Pagos</button>
+    </div>
+    <div class="nav-user">
+      <div class="nav-avatar" style="background:var(--gold);color:var(--navy)">AD</div>
+      <span>Administrador</span>
+      <button class="btn-logout" onclick="doLogout()">Salir</button>
+    </div>
+  </nav>
+  <div class="main">
+    <!-- OVERVIEW -->
+    <div id="aOverview" class="page active">
+      <div class="stats-grid" id="adminStats"></div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Familias Registradas</div>
+          <button class="btn-gold btn-sm" onclick="openAddFamilyModal()">+ Nueva Familia</button>
+        </div>
+        <div class="table-wrap" id="adminFamilyTable"></div>
+      </div>
+    </div>
+    <!-- FAMILIES -->
+    <div id="aFamilies" class="page">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Gestión de Familias</div>
+          <button class="btn-gold btn-sm" onclick="openAddFamilyModal()">+ Nueva Familia</button>
+        </div>
+        <input class="search-bar" placeholder="Buscar por nombre, correo o jugador..." oninput="filterFamilies(this.value)" id="familySearch"/>
+        <div id="familiesDetail"></div>
+      </div>
+    </div>
+    <!-- PAYMENTS ADMIN -->
+    <div id="aPayments" class="page">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Gestión de Pagos</div>
+        </div>
+        <input class="search-bar" placeholder="Buscar jugador..." oninput="filterPaymentAdmin(this.value)" id="paySearch"/>
+        <div id="adminPaymentList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ADD/EDIT FAMILY -->
+<div class="modal-backdrop" id="familyModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Nueva Familia</div>
+      <button class="modal-close" onclick="closeModal('familyModal')">×</button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- MODAL: SET PAYMENT -->
+<div class="modal-backdrop" id="paymentModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="pmTitle">Configurar Cuotas</div>
+      <button class="modal-close" onclick="closeModal('paymentModal')">×</button>
+    </div>
+    <div id="pmBody"></div>
+  </div>
+</div>
+
+<script>
+// ===================== DATA STORE =====================
+const MONTHS=['Agosto','Septiembre','Octubre','Noviembre','Diciembre','Enero','Febrero','Marzo','Abril','Mayo','Junio'];
+const SIZES=['4','6','8','10','12','14','16','S','M','L','XL'];
+
+let state={
+  currentUser:null,
+  currentRole:null,
+  families:[
+    {
+      id:1,email:'garcia@mail.com',pass:'1234',dad:'Roberto García',mom:'Ana García',phone:'662-111-2222',
+      players:[
+        {id:101,name:'Luis García',bday:'2014-05-10',size:'12',
+         payments:{inscripcion:{amount:3400,paid:true},uniforme:{amount:2500,paid:false},
+           months:{Agosto:{amount:800,paid:true},Septiembre:{amount:800,paid:true},Octubre:{amount:800,paid:false},
+             Noviembre:{amount:800,paid:false},Diciembre:{amount:800,paid:false},Enero:{amount:800,paid:false},
+             Febrero:{amount:800,paid:false},Marzo:{amount:800,paid:false},Abril:{amount:800,paid:false},
+             Mayo:{amount:800,paid:false},Junio:{amount:800,paid:false}},
+           extras:[{id:1,concept:'Torneo Estatal Nov',amount:350,paid:true}]}},
+        {id:102,name:'Diego García',bday:'2016-08-22',size:'8',
+         payments:{inscripcion:{amount:3400,paid:true},uniforme:{amount:2500,paid:false},
+           months:{Agosto:{amount:650,paid:true},Septiembre:{amount:650,paid:false},Octubre:{amount:650,paid:false},
+             Noviembre:{amount:650,paid:false},Diciembre:{amount:650,paid:false},Enero:{amount:650,paid:false},
+             Febrero:{amount:650,paid:false},Marzo:{amount:650,paid:false},Abril:{amount:650,paid:false},
+             Mayo:{amount:650,paid:false},Junio:{amount:650,paid:false}},
+           extras:[]}}
+      ]
+    },
+    {
+      id:2,email:'lopez@mail.com',pass:'1234',dad:'Carlos López',mom:'María López',phone:'662-333-4444',
+      players:[
+        {id:201,name:'Sofía López',bday:'2013-11-30',size:'14',
+         payments:{inscripcion:{amount:3400,paid:true},uniforme:{amount:2500,paid:true},
+           months:{Agosto:{amount:900,paid:true},Septiembre:{amount:900,paid:true},Octubre:{amount:900,paid:true},
+             Noviembre:{amount:900,paid:false},Diciembre:{amount:900,paid:false},Enero:{amount:900,paid:false},
+             Febrero:{amount:900,paid:false},Marzo:{amount:900,paid:false},Abril:{amount:900,paid:false},
+             Mayo:{amount:900,paid:false},Junio:{amount:900,paid:false}},
+           extras:[{id:1,concept:'Torneo Copa MX',amount:500,paid:false}]}}
+      ]
+    }
+  ]
+};
+
+// ===================== UTILITIES =====================
+function fmt(n){return '$'+Number(n).toLocaleString('es-MX')}
+function initials(s){return s.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}
+function age(bday){const d=new Date(bday),n=new Date();let a=n.getFullYear()-d.getFullYear();if(n<new Date(n.getFullYear(),d.getMonth(),d.getDate()))a--;return a}
+function toast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type?' '+type:'');setTimeout(()=>t.className='toast',2800)}
+function closeModal(id){document.getElementById(id).style.display='none'}
+function getFamilyById(id){return state.families.find(f=>f.id===id)}
+
+// ===================== AUTH =====================
+let extraPlayerCount=1;
+function addPlayerField(){
+  extraPlayerCount++;
+  const c=document.getElementById('extraPlayersReg');
+  const d=document.createElement('div');
+  const n=extraPlayerCount;
+  d.innerHTML=`<div class="section-title">Jugador ${n}</div>
+  <div class="form-grid">
+    <div class="form-group"><label class="form-label">Nombre del Jugador</label><input class="form-input" type="text" id="p${n}name" placeholder="Nombre completo"/></div>
+    <div class="form-group"><label class="form-label">Fecha de Nacimiento</label><input class="form-input" type="date" id="p${n}bday"/></div>
+    <div class="form-group"><label class="form-label">Talla de Ropa</label><select class="form-select" id="p${n}size"><option value="">Seleccionar...</option>${SIZES.map(s=>`<option>${s}</option>`).join('')}</select></div>
+  </div>`;
+  c.appendChild(d);
+}
+
+function toggleForm(mode){
+  document.getElementById('loginMode').style.display=mode==='login'?'block':'none';
+  document.getElementById('registerMode').style.display=mode==='register'?'block':'none';
+}
+
+function doLogin(forceRole){
+  if(forceRole==='admin'){
+    state.currentRole='admin';
+    state.currentUser=null;
+    showPortal('admin');
+    renderAdmin();
+    return;
+  }
+  const em=document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pw=document.getElementById('loginPass').value;
+  const fam=state.families.find(f=>f.email.toLowerCase()===em&&f.pass===pw);
+  if(!fam){
+    if(em==='admin'||em==='admin@tigres.com'){doLogin('admin');return;}
+    toast('Correo o contraseña incorrectos','error');return;
+  }
+  state.currentRole='parent';state.currentUser=fam;
+  showPortal('parent');renderParent();
+}
+
+function doRegister(){
+  const dad=document.getElementById('regDad').value.trim();
+  const mom=document.getElementById('regMom').value.trim();
+  const em=document.getElementById('regEmail').value.trim().toLowerCase();
+  const ph=document.getElementById('regPhone').value.trim();
+  const pw=document.getElementById('regPass').value;
+  const p1n=document.getElementById('p1name').value.trim();
+  const p1b=document.getElementById('p1bday').value;
+  const p1s=document.getElementById('p1size').value;
+  if(!dad||!mom||!em||!pw||!p1n||!p1b||!p1s){toast('Por favor completa todos los campos','error');return;}
+  if(state.families.find(f=>f.email.toLowerCase()===em)){toast('Este correo ya está registrado','error');return;}
+  const players=[];
+  const pid=Date.now();
+  players.push({id:pid,name:p1n,bday:p1b,size:p1s,payments:{inscripcion:{amount:3400,paid:false},uniforme:{amount:2500,paid:false},months:{},extras:[]}});
+  for(let i=2;i<=extraPlayerCount;i++){
+    const pn=document.getElementById(`p${i}name`)?.value.trim();
+    const pb=document.getElementById(`p${i}bday`)?.value;
+    const ps=document.getElementById(`p${i}size`)?.value;
+    if(pn&&pb&&ps)players.push({id:pid+i,name:pn,bday:pb,size:ps,payments:{inscripcion:{amount:3400,paid:false},uniforme:{amount:2500,paid:false},months:{},extras:[]}});
+  }
+  const fam={id:Date.now(),email:em,pass:pw,dad,mom,phone:ph,players};
+  state.families.push(fam);
+  state.currentRole='parent';state.currentUser=fam;
+  showPortal('parent');renderParent();
+  toast('¡Registro exitoso! Bienvenido a Tigres Hermosillo','success');
+}
+
+function doLogout(){
+  state.currentRole=null;state.currentUser=null;
+  document.getElementById('loginPage').style.display='block';
+  document.getElementById('parentPortal').style.display='none';
+  document.getElementById('adminPortal').style.display='none';
+  toggleForm('login');
+}
+
+function showPortal(role){
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('parentPortal').style.display=role==='parent'?'block':'none';
+  document.getElementById('adminPortal').style.display=role==='admin'?'block':'none';
+}
+
+// ===================== PARENT PORTAL =====================
+function showParentTab(tab){
+  document.querySelectorAll('#parentPortal .nav-tab').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('#parentPortal .page').forEach(p=>p.classList.remove('active'));
+  const map={dashboard:'pDashboard',payments:'pPayments',profile:'pProfile'};
+  document.getElementById(map[tab]).classList.add('active');
+}
+
+function calcBalance(player){
+  const p=player.payments;
+  let total=p.inscripcion.amount+p.uniforme.amount;
+  let paid=0;
+  if(p.inscripcion.paid)paid+=p.inscripcion.amount;
+  if(p.uniforme.paid)paid+=p.uniforme.amount;
+  MONTHS.forEach(m=>{if(p.months[m]){total+=p.months[m].amount;if(p.months[m].paid)paid+=p.months[m].amount;}});
+  (p.extras||[]).forEach(e=>{total+=e.amount;if(e.paid)paid+=e.amount;});
+  return{total,paid,pending:total-paid};
+}
+
+function renderParent(){
+  const fam=state.currentUser;
+  const name=fam.mom||fam.dad;
+  document.getElementById('parentInitials').textContent=initials(name);
+  document.getElementById('parentNameNav').textContent=name.split(' ')[0];
+  document.getElementById('wbTitle').textContent=`Bienvenida, Familia ${fam.dad.split(' ').pop()}`;
+
+  // Stats
+  let totalPaid=0,totalPending=0;
+  fam.players.forEach(p=>{const b=calcBalance(p);totalPaid+=b.paid;totalPending+=b.pending;});
+  document.getElementById('parentStats').innerHTML=`
+    <div class="stat-card"><div class="stat-num">${fam.players.length}</div><div class="stat-label">Jugador${fam.players.length>1?'es':''} Registrado${fam.players.length>1?'s':''}</div></div>
+    <div class="stat-card"><div class="stat-num green">${fmt(totalPaid)}</div><div class="stat-label">Total Pagado</div></div>
+    <div class="stat-card"><div class="stat-num red">${fmt(totalPending)}</div><div class="stat-label">Saldo Pendiente</div></div>`;
+
+  // Player cards
+  document.getElementById('playerCards').innerHTML=fam.players.map(p=>{
+    const b=calcBalance(p);
+    const pct=b.total>0?Math.round((b.paid/b.total)*100):0;
+    const status=b.pending===0?'badge-paid':b.paid>0?'badge-partial':'badge-pending';
+    const statusTxt=b.pending===0?'Al corriente':b.paid>0?'Pago parcial':'Pendiente';
+    return`<div class="player-card">
+      <div class="player-header">
+        <div class="player-avatar">${initials(p.name)}</div>
+        <div>
+          <div class="player-name">${p.name}</div>
+          <div class="player-info">${age(p.bday)} años · Talla ${p.size} · <span class="badge ${status}">${statusTxt}</span></div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div style="font-size:20px;font-weight:700;color:var(--danger)">${fmt(b.pending)}</div>
+          <div style="font-size:11px;color:var(--gray-400)">pendiente</div>
+        </div>
+      </div>
+      <div style="margin-bottom:6px;display:flex;justify-content:space-between;font-size:12px;color:var(--gray-600)">
+        <span>Progreso de pagos</span><span>${pct}%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill ${pct===100?'green':''}" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+
+  // Payment details
+  document.getElementById('paymentDetails').innerHTML=fam.players.map(p=>{
+    const rows=[
+      `<tr><td><strong>Inscripción</strong></td><td>${fmt(p.payments.inscripcion.amount)}</td><td><span class="badge ${p.payments.inscripcion.paid?'badge-paid':'badge-pending'}">${p.payments.inscripcion.paid?'Pagado':'Pendiente'}</span></td></tr>`,
+      `<tr><td><strong>Uniforme</strong></td><td>${fmt(p.payments.uniforme.amount)}</td><td><span class="badge ${p.payments.uniforme.paid?'badge-paid':'badge-pending'}">${p.payments.uniforme.paid?'Pagado':'Pendiente'}</span></td></tr>`,
+      ...MONTHS.filter(m=>p.payments.months[m]).map(m=>`<tr><td>${m}</td><td>${fmt(p.payments.months[m].amount)}</td><td><span class="badge ${p.payments.months[m].paid?'badge-paid':'badge-pending'}">${p.payments.months[m].paid?'Pagado':'Pendiente'}</span></td></tr>`),
+      ...(p.payments.extras||[]).map(e=>`<tr><td>${e.concept}</td><td>${fmt(e.amount)}</td><td><span class="badge ${e.paid?'badge-paid':'badge-pending'}">${e.paid?'Pagado':'Pendiente'}</span></td></tr>`)
+    ];
+    const b=calcBalance(p);
+    return`<div style="margin-bottom:1.5rem">
+      <div style="font-size:14px;font-weight:600;color:var(--navy);margin-bottom:0.75rem;display:flex;align-items:center;gap:8px">
+        <div class="player-avatar" style="width:30px;height:30px;font-size:12px">${initials(p.name)}</div>${p.name}
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>Concepto</th><th>Monto</th><th>Estado</th></tr></thead><tbody>${rows.join('')}</tbody>
+      <tfoot><tr style="background:var(--gray-50)"><td colspan="2" style="padding:10px 12px;font-weight:700;color:var(--navy)">Total Pendiente</td><td style="padding:10px 12px;font-weight:700;color:var(--danger)">${fmt(b.pending)}</td></tr></tfoot>
+      </table></div></div>`;
+  }).join('<hr style="border:none;border-top:1px solid var(--gray-200);margin:1rem 0"/>');
+
+  // Profile
+  document.getElementById('profileInfo').innerHTML=`
+    <div class="form-grid" style="margin-bottom:1rem">
+      <div><div class="form-label">Nombre del Papá</div><div style="font-size:14px;padding:8px 0">${fam.dad}</div></div>
+      <div><div class="form-label">Nombre de la Mamá</div><div style="font-size:14px;padding:8px 0">${fam.mom}</div></div>
+      <div><div class="form-label">Correo</div><div style="font-size:14px;padding:8px 0">${fam.email}</div></div>
+      <div><div class="form-label">Teléfono</div><div style="font-size:14px;padding:8px 0">${fam.phone}</div></div>
+    </div>
+    <div class="section-title">Jugadores</div>
+    ${fam.players.map(p=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-200)">
+      <div class="player-avatar" style="width:36px;height:36px;font-size:13px">${initials(p.name)}</div>
+      <div><div style="font-weight:600;font-size:14px">${p.name}</div><div style="font-size:12px;color:var(--gray-600)">Nacimiento: ${p.bday} · Talla: ${p.size}</div></div>
+    </div>`).join('')}`;
+}
+
+// ===================== ADMIN PORTAL =====================
+function showAdminTab(tab){
+  document.querySelectorAll('#adminPortal .nav-tab').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('#adminPortal .page').forEach(p=>p.classList.remove('active'));
+  const map={overview:'aOverview',families:'aFamilies',payments:'aPayments'};
+  document.getElementById(map[tab]).classList.add('active');
+  if(tab==='payments')renderAdminPayments('');
+  if(tab==='families')renderFamiliesDetail('');
+}
+
+function renderAdmin(){
+  const total=state.families.length;
+  const players=state.families.reduce((a,f)=>a+f.players.length,0);
+  let collected=0,pending=0;
+  state.families.forEach(f=>f.players.forEach(p=>{const b=calcBalance(p);collected+=b.paid;pending+=b.pending;}));
+  document.getElementById('adminStats').innerHTML=`
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Familias</div></div>
+    <div class="stat-card"><div class="stat-num gold">${players}</div><div class="stat-label">Jugadores</div></div>
+    <div class="stat-card"><div class="stat-num green">${fmt(collected)}</div><div class="stat-label">Cobrado</div></div>
+    <div class="stat-card"><div class="stat-num red">${fmt(pending)}</div><div class="stat-label">Por Cobrar</div></div>`;
+
+  // Summary table
+  const rows=state.families.map(f=>{
+    let paid=0,pend=0;
+    f.players.forEach(p=>{const b=calcBalance(p);paid+=b.paid;pend+=b.pending;});
+    const status=pend===0?'badge-paid':paid>0?'badge-partial':'badge-pending';
+    const stxt=pend===0?'Al corriente':paid>0?'Parcial':'Pendiente';
+    return`<tr>
+      <td><strong>${f.dad}</strong><div style="font-size:11px;color:var(--gray-400)">${f.email}</div></td>
+      <td>${f.players.map(p=>`<span style="display:block">${p.name}</span>`).join('')}</td>
+      <td style="color:var(--success);font-weight:600">${fmt(paid)}</td>
+      <td style="color:var(--danger);font-weight:600">${fmt(pend)}</td>
+      <td><span class="badge ${status}">${stxt}</span></td>
+      <td><button class="btn-gold btn-sm" onclick="openPaymentModal(${f.id})">Pagos</button> <button class="btn-outline btn-sm" onclick="openEditFamily(${f.id})">Ver</button></td>
+    </tr>`;
+  });
+  document.getElementById('adminFamilyTable').innerHTML=`<table><thead><tr><th>Familia</th><th>Jugadores</th><th>Pagado</th><th>Pendiente</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>${rows.join('')}</tbody></table>`;
+}
+
+function renderFamiliesDetail(q){
+  const fams=state.families.filter(f=>{
+    const s=(f.dad+f.mom+f.email+f.players.map(p=>p.name).join(' ')).toLowerCase();
+    return s.includes(q.toLowerCase());
+  });
+  document.getElementById('familiesDetail').innerHTML=fams.map(f=>{
+    return`<div class="player-card" style="margin-bottom:1rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">
+        <div>
+          <div style="font-weight:700;font-size:15px;color:var(--navy)">${f.dad} / ${f.mom}</div>
+          <div style="font-size:12px;color:var(--gray-600)">${f.email} · ${f.phone}</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn-gold btn-sm" onclick="openPaymentModal(${f.id})">Pagos</button>
+          <button class="btn-outline btn-sm" onclick="openEditFamily(${f.id})">Editar</button>
+        </div>
+      </div>
+      ${f.players.map(p=>{const b=calcBalance(p);return`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid var(--gray-200)">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="player-avatar" style="width:32px;height:32px;font-size:12px">${initials(p.name)}</div>
+          <div><div style="font-size:13px;font-weight:600">${p.name}</div><div style="font-size:11px;color:var(--gray-400)">Talla ${p.size}</div></div>
+        </div>
+        <div style="text-align:right;font-size:12px">
+          <div style="color:var(--success);font-weight:600">${fmt(b.paid)} pagado</div>
+          <div style="color:var(--danger);font-weight:600">${fmt(b.pending)} pendiente</div>
+        </div>
+      </div>`;}).join('')}
+    </div>`;
+  }).join('');
+}
+
+function filterFamilies(q){renderFamiliesDetail(q);}
+function filterPaymentAdmin(q){renderAdminPayments(q);}
+
+function renderAdminPayments(q){
+  let allPlayers=[];
+  state.families.forEach(f=>f.players.forEach(p=>{
+    if(!q||p.name.toLowerCase().includes(q.toLowerCase())||f.dad.toLowerCase().includes(q.toLowerCase()))
+      allPlayers.push({player:p,family:f});
+  }));
+  document.getElementById('adminPaymentList').innerHTML=allPlayers.map(({player:p,family:f})=>{
+    const b=calcBalance(p);
+    return`<div class="player-card" style="margin-bottom:1rem">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="player-avatar">${initials(p.name)}</div>
+          <div><div class="player-name">${p.name}</div><div class="player-info">Familia ${f.dad.split(' ').pop()} · ${f.email}</div></div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:12px;color:var(--danger);font-weight:600">${fmt(b.pending)} pendiente</span>
+          <button class="btn-gold btn-sm" onclick="openPaymentModal(${f.id},${p.id})">Editar Pagos</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===================== MODALS =====================
+function openAddFamilyModal(){
+  document.getElementById('modalTitle').textContent='Nueva Familia';
+  document.getElementById('familyModal').style.display='flex';
+  let epCount=1;
+  document.getElementById('modalBody').innerHTML=`
+    <div class="section-title" style="margin-top:0">Datos de la Familia</div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Nombre del Papá</label><input class="form-input" id="mDad" type="text" placeholder="Nombre completo"/></div>
+      <div class="form-group"><label class="form-label">Nombre de la Mamá</label><input class="form-input" id="mMom" type="text" placeholder="Nombre completo"/></div>
+      <div class="form-group"><label class="form-label">Correo</label><input class="form-input" id="mEmail" type="email" placeholder="correo@ejemplo.com"/></div>
+      <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="mPhone" type="tel" placeholder="662-000-0000"/></div>
+      <div class="form-group"><label class="form-label">Contraseña</label><input class="form-input" id="mPass" type="text" value="tigres2024"/></div>
+    </div>
+    <div class="section-title">Jugador 1</div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Nombre</label><input class="form-input" id="mp1name" type="text"/></div>
+      <div class="form-group"><label class="form-label">Fecha de Nacimiento</label><input class="form-input" id="mp1bday" type="date"/></div>
+      <div class="form-group"><label class="form-label">Talla</label><select class="form-select" id="mp1size"><option value="">Seleccionar...</option>${SIZES.map(s=>`<option>${s}</option>`).join('')}</select></div>
+    </div>
+    <div id="mExtraPlayers"></div>
+    <button class="btn-outline" style="margin-bottom:1rem" onclick="addModalPlayer()">+ Agregar jugador</button><br/>
+    <button class="btn-primary" onclick="saveNewFamily()">Guardar Familia</button>`;
+  window.addModalPlayer=function(){
+    epCount++;const c=document.getElementById('mExtraPlayers');
+    const d=document.createElement('div');
+    d.innerHTML=`<div class="section-title">Jugador ${epCount}</div><div class="form-grid">
+      <div class="form-group"><label class="form-label">Nombre</label><input class="form-input" id="mp${epCount}name" type="text"/></div>
+      <div class="form-group"><label class="form-label">Fecha de Nacimiento</label><input class="form-input" id="mp${epCount}bday" type="date"/></div>
+      <div class="form-group"><label class="form-label">Talla</label><select class="form-select" id="mp${epCount}size"><option value="">Seleccionar...</option>${SIZES.map(s=>`<option>${s}</option>`).join('')}</select></div>
+    </div>`;
+    c.appendChild(d);
+  };
+  window.saveNewFamily=function(){
+    const dad=document.getElementById('mDad').value.trim();
+    const mom=document.getElementById('mMom').value.trim();
+    const em=document.getElementById('mEmail').value.trim().toLowerCase();
+    const ph=document.getElementById('mPhone').value.trim();
+    const pw=document.getElementById('mPass').value;
+    const p1n=document.getElementById('mp1name').value.trim();
+    const p1b=document.getElementById('mp1bday').value;
+    const p1s=document.getElementById('mp1size').value;
+    if(!dad||!mom||!em||!p1n||!p1b||!p1s){toast('Completa todos los campos requeridos','error');return;}
+    const players=[{id:Date.now(),name:p1n,bday:p1b,size:p1s,payments:{inscripcion:{amount:3400,paid:false},uniforme:{amount:2500,paid:false},months:{},extras:[]}}];
+    for(let i=2;i<=epCount;i++){
+      const pn=document.getElementById(`mp${i}name`)?.value.trim();
+      const pb=document.getElementById(`mp${i}bday`)?.value;
+      const ps=document.getElementById(`mp${i}size`)?.value;
+      if(pn&&pb&&ps)players.push({id:Date.now()+i,name:pn,bday:pb,size:ps,payments:{inscripcion:{amount:3400,paid:false},uniforme:{amount:2500,paid:false},months:{},extras:[]}});
+    }
+    state.families.push({id:Date.now(),email:em,pass:pw,dad,mom,phone:ph,players});
+    closeModal('familyModal');renderAdmin();renderFamiliesDetail('');
+    toast('Familia registrada correctamente','success');
+  };
+}
+
+function openEditFamily(famId){
+  const fam=getFamilyById(famId);
+  document.getElementById('modalTitle').textContent='Ver / Editar Familia';
+  document.getElementById('familyModal').style.display='flex';
+  document.getElementById('modalBody').innerHTML=`
+    <div class="section-title" style="margin-top:0">Datos de la Familia</div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Papá</label><input class="form-input" id="eDad" value="${fam.dad}"/></div>
+      <div class="form-group"><label class="form-label">Mamá</label><input class="form-input" id="eMom" value="${fam.mom}"/></div>
+      <div class="form-group"><label class="form-label">Correo</label><input class="form-input" id="eEmail" value="${fam.email}"/></div>
+      <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="ePhone" value="${fam.phone}"/></div>
+    </div>
+    <div class="section-title">Jugadores</div>
+    ${fam.players.map(p=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--gray-200)">
+      <div class="player-avatar" style="width:34px;height:34px;font-size:12px">${initials(p.name)}</div>
+      <div><div style="font-weight:600;font-size:14px">${p.name}</div><div style="font-size:12px;color:var(--gray-400)">Nacimiento: ${p.bday} · Talla: ${p.size}</div></div>
+    </div>`).join('')}
+    <div style="margin-top:1.5rem;display:flex;gap:8px">
+      <button class="btn-primary" onclick="saveEditFamily(${famId})">Guardar Cambios</button>
+      <button class="btn-gold" onclick="openPaymentModal(${famId})">Ver Pagos</button>
+    </div>`;
+  window.saveEditFamily=function(id){
+    const f=getFamilyById(id);
+    f.dad=document.getElementById('eDad').value;
+    f.mom=document.getElementById('eMom').value;
+    f.email=document.getElementById('eEmail').value;
+    f.phone=document.getElementById('ePhone').value;
+    closeModal('familyModal');renderAdmin();
+    toast('Datos actualizados','success');
+  };
+}
+
+function openPaymentModal(famId,playerId){
+  const fam=getFamilyById(famId);
+  const players=playerId?fam.players.filter(p=>p.id===playerId):fam.players;
+  document.getElementById('pmTitle').textContent=`Pagos — Familia ${fam.dad.split(' ').pop()}`;
+  document.getElementById('paymentModal').style.display='flex';
+  renderPaymentModal(fam,players);
+}
+
+function renderPaymentModal(fam,players){
+  document.getElementById('pmBody').innerHTML=players.map(p=>{
+    const b=calcBalance(p);
+    return`<div style="margin-bottom:2rem">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem">
+        <div class="player-avatar">${initials(p.name)}</div>
+        <div><div style="font-weight:700;color:var(--navy)">${p.name}</div>
+        <div style="font-size:12px;color:var(--gray-400)">Saldo pendiente: <strong style="color:var(--danger)">${fmt(b.pending)}</strong></div></div>
+      </div>
+      
+      <div class="section-title" style="margin-top:0">Conceptos Fijos</div>
+      <div class="payment-month">
+        <div class="pm-label">Inscripción</div>
+        <div class="pm-status">
+          <input type="number" class="form-input" style="width:100px;padding:6px 8px" value="${p.payments.inscripcion.amount}" onchange="updateFixed(${fam.id},${p.id},'inscripcion','amount',this.value)"/>
+          <button class="${p.payments.inscripcion.paid?'btn-danger':'btn-success'} btn-sm" onclick="toggleFixed(${fam.id},${p.id},'inscripcion')">${p.payments.inscripcion.paid?'Desmarcar':'✓ Pagado'}</button>
+        </div>
+      </div>
+      <div class="payment-month">
+        <div class="pm-label">Uniforme</div>
+        <div class="pm-status">
+          <input type="number" class="form-input" style="width:100px;padding:6px 8px" value="${p.payments.uniforme.amount}" onchange="updateFixed(${fam.id},${p.id},'uniforme','amount',this.value)"/>
+          <button class="${p.payments.uniforme.paid?'btn-danger':'btn-success'} btn-sm" onclick="toggleFixed(${fam.id},${p.id},'uniforme')">${p.payments.uniforme.paid?'Desmarcar':'✓ Pagado'}</button>
+        </div>
+      </div>
+
+      <div class="section-title">Mensualidades (Ago–Jun)</div>
+      ${MONTHS.map(m=>{
+        const mp=p.payments.months[m]||{amount:0,paid:false};
+        return`<div class="payment-month">
+          <div class="pm-label">${m}</div>
+          <div class="pm-status">
+            <input type="number" class="form-input" style="width:90px;padding:6px 8px" placeholder="Monto" value="${mp.amount||''}" onchange="updateMonth(${fam.id},${p.id},'${m}','amount',this.value)"/>
+            <button class="${mp.paid?'btn-danger':'btn-success'} btn-sm" onclick="toggleMonth(${fam.id},${p.id},'${m}')">${mp.paid?'Desmarcar':'✓ Pagado'}</button>
+          </div>
+        </div>`;
+      }).join('')}
+      
+      <div class="section-title">Cargos Adicionales</div>
+      ${(p.payments.extras||[]).map((e,i)=>`<div class="payment-month">
+        <div class="pm-label"><input class="form-input" style="width:160px;padding:5px 8px" value="${e.concept}" onchange="updateExtra(${fam.id},${p.id},${i},'concept',this.value)"/></div>
+        <div class="pm-status">
+          <input type="number" class="form-input" style="width:90px;padding:6px 8px" value="${e.amount}" onchange="updateExtra(${fam.id},${p.id},${i},'amount',this.value)"/>
+          <button class="${e.paid?'btn-danger':'btn-success'} btn-sm" onclick="toggleExtra(${fam.id},${p.id},${i})">${e.paid?'Desmarcar':'✓ Pagado'}</button>
+          <button class="btn-danger btn-sm" onclick="removeExtra(${fam.id},${p.id},${i})">✕</button>
+        </div>
+      </div>`).join('')}
+      <button class="btn-outline btn-sm" style="margin-top:8px" onclick="addExtra(${fam.id},${p.id})">+ Agregar cargo extra</button>
+    </div>`;
+  }).join('<hr style="border:none;border-top:2px solid var(--gray-200);margin:1rem 0"/>');
+}
+
+// payment helpers
+function getPlayerRef(famId,playerId){return getFamilyById(famId).players.find(p=>p.id===playerId);}
+function refreshPaymentModal(famId,playerId){
+  const fam=getFamilyById(famId);
+  const players=playerId?fam.players.filter(p=>p.id===playerId):fam.players;
+  renderPaymentModal(fam,players);renderAdmin();
+}
+function toggleFixed(famId,pid,key){const p=getPlayerRef(famId,pid);p.payments[key].paid=!p.payments[key].paid;refreshPaymentModal(famId,pid);toast('Actualizado','success');}
+function updateFixed(famId,pid,key,field,val){const p=getPlayerRef(famId,pid);p.payments[key][field]=parseFloat(val)||0;}
+function toggleMonth(famId,pid,m){const p=getPlayerRef(famId,pid);if(!p.payments.months[m])p.payments.months[m]={amount:0,paid:false};p.payments.months[m].paid=!p.payments.months[m].paid;refreshPaymentModal(famId,pid);toast('Actualizado','success');}
+function updateMonth(famId,pid,m,field,val){const p=getPlayerRef(famId,pid);if(!p.payments.months[m])p.payments.months[m]={amount:0,paid:false};p.payments.months[m][field]=parseFloat(val)||0;}
+function addExtra(famId,pid){const p=getPlayerRef(famId,pid);if(!p.payments.extras)p.payments.extras=[];p.payments.extras.push({id:Date.now(),concept:'Nuevo cargo',amount:0,paid:false});refreshPaymentModal(famId,pid);}
+function removeExtra(famId,pid,i){const p=getPlayerRef(famId,pid);p.payments.extras.splice(i,1);refreshPaymentModal(famId,pid);}
+function toggleExtra(famId,pid,i){const p=getPlayerRef(famId,pid);p.payments.extras[i].paid=!p.payments.extras[i].paid;refreshPaymentModal(famId,pid);toast('Actualizado','success');}
+function updateExtra(famId,pid,i,field,val){const p=getPlayerRef(famId,pid);p.payments.extras[i][field]=field==='amount'?(parseFloat(val)||0):val;}
+</script>
+</body>
+</html>
